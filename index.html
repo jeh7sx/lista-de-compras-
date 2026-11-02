@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Bebidas & Pedidos</title>
+  <title>Lista de Compras & Bebidas</title>
   <style>
     :root {
       --bg: #090d16;
@@ -15,9 +15,36 @@
       --accent-green: #10b981;
       --accent-green-hover: #059669;
       --accent-blue: #3b82f6;
+      --accent-blue-hover: #2563eb;
       --accent-whatsapp: #22c55e;
       --danger: #ef4444;
       --pill-bg: #1e293b;
+      --pill-active-bg: #3b82f6;
+      --pill-active-text: #ffffff;
+      --input-bg: #090d16;
+      --badge-bg: #1e293b;
+      --badge-text: #38bdf8;
+    }
+
+    [data-theme="light"] {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --card-hover: #f1f5f9;
+      --border: #e2e8f0;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --accent-green: #059669;
+      --accent-green-hover: #047857;
+      --accent-blue: #2563eb;
+      --accent-blue-hover: #1d4ed8;
+      --accent-whatsapp: #16a34a;
+      --danger: #dc2626;
+      --pill-bg: #e2e8f0;
+      --pill-active-bg: #2563eb;
+      --pill-active-text: #ffffff;
+      --input-bg: #f8fafc;
+      --badge-bg: #e0f2fe;
+      --badge-text: #0284c7;
     }
 
     * {
@@ -25,12 +52,13 @@
       margin: 0;
       padding: 0;
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
     }
 
     body {
       background-color: var(--bg);
       color: var(--text-main);
-      padding: 24px 14px 100px;
+      padding: 20px 14px 80px;
       display: flex;
       justify-content: center;
     }
@@ -40,12 +68,44 @@
       max-width: 640px;
       display: flex;
       flex-direction: column;
-      gap: 18px;
+      gap: 16px;
+    }
+
+    /* Topo e Botão de Tema */
+    .header-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .theme-toggle-btn {
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .badge-viewmode {
+      background: #f59e0b;
+      color: #000;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 12px;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     header {
       text-align: center;
-      padding: 12px 0 6px;
+      padding: 6px 0 2px;
     }
 
     header h1 {
@@ -56,20 +116,20 @@
 
     header p {
       color: var(--text-muted);
-      font-size: 0.9rem;
+      font-size: 0.85rem;
       margin-top: 4px;
     }
 
-    /* Card de ações principais */
+    /* Painel de Estatísticas e Compartilhamento */
     .action-panel {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 16px;
+      padding: 14px;
       display: flex;
       flex-direction: column;
       gap: 12px;
-      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.08);
     }
 
     .stats {
@@ -85,13 +145,13 @@
     .button-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 8px;
     }
 
     .btn {
-      padding: 10px 14px;
+      padding: 10px 12px;
       border-radius: 8px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 600;
       border: none;
       cursor: pointer;
@@ -99,37 +159,88 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
-      transition: all 0.2s;
+      transition: opacity 0.2s;
     }
 
-    .btn-share {
-      background: var(--accent-blue);
-      color: #fff;
-    }
-    .btn-share:hover { background: #2563eb; }
+    .btn:hover { opacity: 0.92; }
+    .btn-edit-link { background: var(--accent-blue); color: #fff; }
+    .btn-view-link { background: #6366f1; color: #fff; }
+    .btn-whatsapp { background: var(--accent-whatsapp); color: #fff; grid-column: span 2; }
 
-    .btn-whatsapp {
-      background: var(--accent-whatsapp);
-      color: #fff;
+    /* Barra de Pesquisa e Filtros */
+    .search-filter-box {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
     }
-    .btn-whatsapp:hover { background: #16a34a; }
 
-    /* Formulário de novo item */
+    .search-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      background: var(--card);
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 10px 14px 10px 36px;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      outline: none;
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      font-size: 0.9rem;
+      color: var(--text-muted);
+    }
+
+    .categories-bar {
+      display: flex;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 4px;
+      scrollbar-width: none;
+    }
+    .categories-bar::-webkit-scrollbar { display: none; }
+
+    .category-chip {
+      background: var(--pill-bg);
+      color: var(--text-muted);
+      border: 1px solid var(--border);
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+
+    .category-chip.active {
+      background: var(--pill-active-bg);
+      color: var(--pill-active-text);
+      border-color: var(--pill-active-bg);
+    }
+
+    /* Formulário de Adicionar Item */
     .form-add {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 14px;
+      padding: 12px;
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
 
     input, select {
-      background: #090d16;
+      background: var(--input-bg);
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 8px 12px;
+      padding: 8px 10px;
       border-radius: 6px;
       font-size: 0.85rem;
       outline: none;
@@ -140,8 +251,8 @@
     }
 
     #inpName { flex: 1; min-width: 140px; }
-    #inpQty { width: 65px; text-align: center; }
-    #inpCat { width: 110px; }
+    #inpQty { width: 60px; text-align: center; }
+    #inpCat { width: 130px; }
 
     .btn-add {
       background: var(--accent-green);
@@ -153,9 +264,8 @@
       font-size: 0.85rem;
       cursor: pointer;
     }
-    .btn-add:hover { background: var(--accent-green-hover); }
 
-    /* Lista de itens */
+    /* Lista de Itens */
     .items-list {
       display: flex;
       flex-direction: column;
@@ -171,13 +281,10 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
-      transition: all 0.2s;
     }
 
     .item-card.checked {
-      background: rgba(19, 27, 46, 0.4);
-      border-color: rgba(35, 49, 78, 0.5);
-      opacity: 0.5;
+      opacity: 0.45;
     }
 
     .item-left {
@@ -209,23 +316,28 @@
       text-decoration: line-through;
     }
 
-    .item-cat {
-      font-size: 0.7rem;
-      color: var(--text-muted);
+    .item-cat-badge {
+      font-size: 0.68rem;
+      color: var(--badge-text);
+      background: var(--badge-bg);
+      padding: 1px 6px;
+      border-radius: 6px;
+      width: fit-content;
       text-transform: uppercase;
-      letter-spacing: 0.4px;
+      font-weight: 600;
+      letter-spacing: 0.3px;
     }
 
     .item-right {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
 
     .qty-box {
       display: flex;
       align-items: center;
-      background: #090d16;
+      background: var(--input-bg);
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 2px;
@@ -240,7 +352,7 @@
       font-size: 0.95rem;
       line-height: 1;
     }
-    .qty-btn:hover { color: #fff; }
+    .qty-btn:hover { color: var(--text-main); }
 
     .qty-num {
       min-width: 20px;
@@ -255,24 +367,37 @@
       color: #64748b;
       cursor: pointer;
       font-size: 1.1rem;
-      line-height: 1;
       padding: 2px;
     }
     .btn-remove:hover { color: var(--danger); }
 
-    /* Toast de feedback */
+    /* Estado de leitura (Visualização apenas) */
+    body.is-readonly .form-add,
+    body.is-readonly .btn-remove,
+    body.is-readonly .qty-btn,
+    body.is-readonly #btnCopyEdit {
+      display: none !important;
+    }
+    body.is-readonly .custom-check {
+      pointer-events: none;
+    }
+    body.is-readonly .button-group {
+      grid-template-columns: 1fr;
+    }
+
+    /* Toast */
     .toast {
       position: fixed;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: #2563eb;
+      background: var(--accent-blue);
       color: white;
-      padding: 10px 20px;
+      padding: 9px 18px;
       border-radius: 30px;
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       font-weight: 500;
-      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      box-shadow: 0 4px 15px rgba(0,0,0,0.3);
       opacity: 0;
       transition: all 0.3s ease;
       z-index: 100;
@@ -284,6 +409,7 @@
 
     @media (max-width: 480px) {
       .button-group { grid-template-columns: 1fr; }
+      .btn-whatsapp { grid-column: span 1; }
       #inpCat { width: 100%; }
       #inpQty { width: calc(50% - 4px); }
       .btn-add { width: 100%; }
@@ -293,32 +419,50 @@
 <body>
 
   <div class="container">
+    <!-- Barra superior com Tema e Modo -->
+    <div class="header-top">
+      <div id="readOnlyIndicator" style="display: none;">
+        <span class="badge-viewmode">Modo Visualização</span>
+      </div>
+      <div style="flex: 1;"></div>
+      <button class="theme-toggle-btn" id="btnThemeToggle">
+        <span id="themeIcon">☀️</span> Modo Claro
+      </button>
+    </div>
+
     <header>
       <h1>📦 Lista de Bebidas</h1>
-      <p>Marque os itens, ajuste as quantidades e compartilhe o link atualizado</p>
+      <p id="headerSubtitle">Marque os itens, ajuste as quantidades e filtre por categoria</p>
     </header>
 
-    <!-- Painel de Compartilhamento & Progresso -->
+    <!-- Painel de Compartilhamento -->
     <div class="action-panel">
       <div class="stats">
-        <span id="txtProgress">0 de 0 selecionados</span>
-        <span id="txtItemsTotal">0 produtos cadastrados</span>
+        <span id="txtProgress">0 de 0 pegos</span>
+        <span id="txtItemsTotal">0 itens</span>
       </div>
       <div class="button-group">
-        <button class="btn btn-share" id="btnCopyLink">🔗 Copiar Link Atualizado</button>
+        <button class="btn btn-edit-link" id="btnCopyEdit">✏️ Link para Editar</button>
+        <button class="btn btn-view-link" id="btnCopyView">👁️ Link só Visualizar</button>
         <button class="btn btn-whatsapp" id="btnSendWhats">📱 Enviar no WhatsApp</button>
       </div>
     </div>
 
-    <!-- Adicionar Novo Produto -->
+    <!-- Barra de Pesquisa e Filtros -->
+    <div class="search-filter-box">
+      <div class="search-input-wrap">
+        <span class="search-icon">🔍</span>
+        <input type="text" id="inpSearch" placeholder="Pesquisar produto...">
+      </div>
+      <div class="categories-bar" id="categoriesBar"></div>
+    </div>
+
+    <!-- Formulário de Cadastro (Oculto em modo leitura) -->
     <form class="form-add" id="formAdd">
-      <input type="text" id="inpName" placeholder="Novo item (ex: Gelo 5kg)" required>
+      <input type="text" id="inpName" placeholder="Novo item (ex: Suco de Laranja 1L)" required>
       <input type="number" id="inpQty" value="1" min="1" required>
       <select id="inpCat">
-        <option value="Refrigerante">Refrigerante</option>
-        <option value="Cerveja">Cerveja</option>
-        <option value="Energético">Energético</option>
-        <option value="Outros">Outros</option>
+        <!-- Preenchido dinamicamente -->
       </select>
       <button type="submit" class="btn-add">+ Adicionar</button>
     </form>
@@ -327,10 +471,9 @@
     <div class="items-list" id="listWrapper"></div>
   </div>
 
-  <div class="toast" id="toast">Link copiado para a área de transferência!</div>
+  <div class="toast" id="toast">Link copiado!</div>
 
   <script>
-    // Catálogo base padrão
     const defaultCatalog = [
       { n: "Coca-Cola Normal — 220ml", q: 1, c: "Refrigerante", s: 0 },
       { n: "Coca-Cola Normal — 2L", q: 1, c: "Refrigerante", s: 0 },
@@ -367,17 +510,184 @@
     ];
 
     let items = [];
+    let customCategories = new Set(["Refrigerante", "Cerveja", "Energético", "Outros"]);
+    let currentFilter = "Todas";
+    let searchQuery = "";
+    let isReadOnly = false;
 
-    // Decodifica o estado da URL (Base64 UTF-8)
-    function loadFromUrl() {
+    // Detecta se a URL é de visualização ou de edição
+    function checkMode() {
+      const params = new URLSearchParams(window.location.search);
+      isReadOnly = params.get('mode') === 'view';
+      if (isReadOnly) {
+        document.body.classList.add('is-readonly');
+        document.getElementById('readOnlyIndicator').style.display = 'block';
+        document.getElementById('headerSubtitle').textContent = 'Lista em modo somente leitura';
+      }
+    }
+
+    // Carrega dados da hash (#)
+    function loadData() {
       const hash = window.location.hash.substring(1);
       if (hash) {
         try {
           const json = decodeURIComponent(escape(atob(hash)));
           items = JSON.parse(json);
+          items.forEach(it => { if(it.c) customCategories.add(it.c); });
           return;
         } catch (e) {
-          console.error("Erro ao carregar dados da URL:", e);
+          console.error("Falha ao decodificar hash da URL:", e);
+        }
+      }
+      items = [...defaultCatalog];
+    }
+
+    function syncHash() {
+      if (isReadOnly) return;
+      const json = JSON.stringify(items);
+      const hash = btoa(unescape(encodeURIComponent(json)));
+      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${hash}`);
+    }
+
+    // Renderiza o select do formulário e as pílulas de filtro
+    function renderCategoryUI() {
+      items.forEach(it => { if (it.c) customCategories.add(it.c); });
+
+      const sel = document.getElementById('inpCat');
+      const catsArray = Array.from(customCategories);
+      
+      sel.innerHTML = catsArray.map(c => `<option value="${c}">${c}</option>`).join('') + 
+                      `<option value="__NEW__">+ Nova categoria...</option>`;
+
+      const bar = document.getElementById('categoriesBar');
+      bar.innerHTML = `<button class="category-chip ${currentFilter === 'Todas' ? 'active' : ''}" onclick="setFilter('Todas')">Todas</button>` +
+        catsArray.map(c => `<button class="category-chip ${currentFilter === c ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>`).join('');
+    }
+
+    window.setFilter = (cat) => {
+      currentFilter = cat;
+      renderCategoryUI();
+      renderItems();
+    };
+
+    function renderItems() {
+      const listWrapper = document.getElementById('listWrapper');
+      listWrapper.innerHTML = '';
+      let checkedCount = 0;
+
+      const filtered = items.filter(item => {
+        const matchesCat = currentFilter === "Todas" || item.c === currentFilter;
+        const matchesQuery = item.n.toLowerCase().includes(searchQuery.toLowerCase());
+        return matchesCat && matchesQuery;
+      });
+
+      items.forEach(it => { if (it.s === 1) checkedCount++; });
+
+      filtered.forEach((item) => {
+        const originalIndex = items.indexOf(item);
+        const card = document.createElement('div');
+        card.className = `item-card ${item.s === 1 ? 'checked' : ''}`;
+        card.innerHTML = `
+          <div class="item-left">
+            <input type="checkbox" class="custom-check" ${item.s === 1 ? 'checked' : ''} onchange="toggleCheck(${originalIndex})">
+            <div class="item-info">
+              <span class="item-title">${item.n}</span>
+              <span class="item-cat-badge">${item.c}</span>
+            </div>
+          </div>
+          <div class="item-right">
+            <div class="qty-box">
+              <button class="qty-btn" type="button" onclick="alterQty(${originalIndex}, -1)">-</button>
+              <span class="qty-num">${item.q}</span>
+              <button class="qty-btn" type="button" onclick="alterQty(${originalIndex}, 1)">+</button>
+            </div>
+            <button class="btn-remove" type="button" title="Excluir" onclick="removeItem(${originalIndex})">×</button>
+          </div>
+        `;
+        listWrapper.appendChild(card);
+      });
+
+      document.getElementById('txtProgress').textContent = `${checkedCount} de ${items.length} pegos`;
+      document.getElementById('txtItemsTotal').textContent = `${filtered.length} visíveis (${items.length} total)`;
+      syncHash();
+    }
+
+    window.toggleCheck = (idx) => {
+      if (isReadOnly) return;
+      items[idx].s = items[idx].s === 1 ? 0 : 1;
+      renderItems();
+    };
+
+    window.alterQty = (idx, delta) => {
+      if (isReadOnly) return;
+      const next = items[idx].q + delta;
+      if (next > 0) {
+        items[idx].q = next;
+        renderItems();
+      }
+    };
+
+    window.removeItem = (idx) => {
+      if (isReadOnly) return;
+      items.splice(idx, 1);
+      renderCategoryUI();
+      renderItems();
+    };
+
+    // Cadastro de Item com suporte a nova categoria
+    const formAdd = document.getElementById('formAdd');
+    const selCat = document.getElementById('inpCat');
+
+    selCat.addEventListener('change', () => {
+      if (selCat.value === '__NEW__') {
+        const newCat = prompt("Digite o nome da nova categoria:");
+        if (newCat && newCat.trim()) {
+          const formatted = newCat.trim();
+          customCategories.add(formatted);
+          renderCategoryUI();
+          selCat.value = formatted;
+        } else {
+          selCat.value = "Outros";
+        }
+      }
+    });
+
+    formAdd.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const n = document.getElementById('inpName').value.trim();
+      const q = parseInt(document.getElementById('inpQty').value, 10);
+      const c = selCat.value;
+
+      if (n) {
+        items.unshift({ n, q, c, s: 0 });
+        renderCategoryUI();
+        renderItems();
+        formAdd.reset();
+        document.getElementById('inpQty').value = 1;
+      }
+    });
+
+    // Busca em tempo real
+    document.getElementById('inpSearch').addEventListener('input', (e) => {
+      searchQuery = e.target.value.trim();
+      renderItems();
+    });
+
+    // Copiar Links (Edição e Leitura)
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.textContent = msg;
+      toast.classList.add('show');
+      setTimeout(() => toast.classList.remove('show'), 2200);
+    }
+
+    document.getElementById('btnCopyEdit').addEventListener('click', () => {
+      syncHash();
+      const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
+      navigator.clipboard.writeText(cleanUrl).then(() => showToast("Link de EDIÇÃO copiado!"));
+    });
+
+    document.getElementById('btnCopyView').addEventListe console.error("Erro ao carregar dados da URL:", e);
         }
       }
       items = [...defaultCatalog];
