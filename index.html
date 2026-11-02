@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lista de Bebidas & Pedidos</title>
+  <style>
+    :root {
+      --bg: #090d16;
+      --card: #131b2e;
+      --card-hover: #1b2640;
+      --border: #23314e;
+      --text-main: #f1f5f9;
+      --text-muted: #94a3b8;
+      --accent-green: #10b981;
+      --accent-green-hover: #059669;
+      --accent-blue: #3b82f6;
+      --accent-whatsapp: #22c55e;
+      --danger: #ef4444;
+      --pill-bg: #1e293b;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+
+    body {
+      background-color: var(--bg);
+      color: var(--text-main);
+      padding: 24px 14px 100px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .container {
+      width: 100%;
+      max-width: 640px;
+      display: flex;
+      flex-direction: column;
+      gap: 18px;
+    }
+
+    header {
+      text-align: center;
+      padding: 12px 0 6px;
+    }
+
+    header h1 {
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 0.9rem;
+      margin-top: 4px;
+    }
+
+    /* Card de ações principais */
+    .action-panel {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+
+    .stats {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .button-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+    }
+
+    .btn {
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .btn-share {
+      background: var(--accent-blue);
+      color: #fff;
+    }
+    .btn-share:hover { background: #2563eb; }
+
+    .btn-whatsapp {
+      background: var(--accent-whatsapp);
+      color: #fff;
+    }
+    .btn-whatsapp:hover { background: #16a34a; }
+
+    /* Formulário de novo item */
+    .form-add {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    input, select {
+      background: #090d16;
+      border: 1px solid var(--border);
+      color: var(--text-main);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-size: 0.85rem;
+      outline: none;
+    }
+
+    input:focus, select:focus {
+      border-color: var(--accent-blue);
+    }
+
+    #inpName { flex: 1; min-width: 140px; }
+    #inpQty { width: 65px; text-align: center; }
+    #inpCat { width: 110px; }
+
+    .btn-add {
+      background: var(--accent-green);
+      color: #fff;
+      padding: 8px 14px;
+      border-radius: 6px;
+      border: none;
+      font-weight: 600;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .btn-add:hover { background: var(--accent-green-hover); }
+
+    /* Lista de itens */
+    .items-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .item-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 10px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      transition: all 0.2s;
+    }
+
+    .item-card.checked {
+      background: rgba(19, 27, 46, 0.4);
+      border-color: rgba(35, 49, 78, 0.5);
+      opacity: 0.5;
+    }
+
+    .item-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+    }
+
+    .custom-check {
+      width: 19px;
+      height: 19px;
+      accent-color: var(--accent-green);
+      cursor: pointer;
+    }
+
+    .item-info {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .item-title {
+      font-size: 0.92rem;
+      font-weight: 500;
+    }
+
+    .item-card.checked .item-title {
+      text-decoration: line-through;
+    }
+
+    .item-cat {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    .item-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .qty-box {
+      display: flex;
+      align-items: center;
+      background: #090d16;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 2px;
+    }
+
+    .qty-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 2px 7px;
+      font-size: 0.95rem;
+      line-height: 1;
+    }
+    .qty-btn:hover { color: #fff; }
+
+    .qty-num {
+      min-width: 20px;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+
+    .btn-remove {
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 1.1rem;
+      line-height: 1;
+      padding: 2px;
+    }
+    .btn-remove:hover { color: var(--danger); }
+
+    /* Toast de feedback */
+    .toast {
+      position: fixed;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%) translateY(100px);
+      background: #2563eb;
+      color: white;
+      padding: 10px 20px;
+      border-radius: 30px;
+      font-size: 0.85rem;
+      font-weight: 500;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+      opacity: 0;
+      transition: all 0.3s ease;
+      z-index: 100;
+    }
+    .toast.show {
+      transform: translateX(-50%) translateY(0);
+      opacity: 1;
+    }
+
+    @media (max-width: 480px) {
+      .button-group { grid-template-columns: 1fr; }
+      #inpCat { width: 100%; }
+      #inpQty { width: calc(50% - 4px); }
+      .btn-add { width: 100%; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <header>
+      <h1>📦 Lista de Bebidas</h1>
+      <p>Marque os itens, ajuste as quantidades e compartilhe o link atualizado</p>
+    </header>
+
+    <!-- Painel de Compartilhamento & Progresso -->
+    <div class="action-panel">
+      <div class="stats">
+        <span id="txtProgress">0 de 0 selecionados</span>
+        <span id="txtItemsTotal">0 produtos cadastrados</span>
+      </div>
+      <div class="button-group">
+        <button class="btn btn-share" id="btnCopyLink">🔗 Copiar Link Atualizado</button>
+        <button class="btn btn-whatsapp" id="btnSendWhats">📱 Enviar no WhatsApp</button>
+      </div>
+    </div>
+
+    <!-- Adicionar Novo Produto -->
+    <form class="form-add" id="formAdd">
+      <input type="text" id="inpName" placeholder="Novo item (ex: Gelo 5kg)" required>
+      <input type="number" id="inpQty" value="1" min="1" required>
+      <select id="inpCat">
+        <option value="Refrigerante">Refrigerante</option>
+        <option value="Cerveja">Cerveja</option>
+        <option value="Energético">Energético</option>
+        <option value="Outros">Outros</option>
+      </select>
+      <button type="submit" class="btn-add">+ Adicionar</button>
+    </form>
+
+    <!-- Lista de Itens -->
+    <div class="items-list" id="listWrapper"></div>
+  </div>
+
+  <div class="toast" id="toast">Link copiado para a área de transferência!</div>
+
+  <script>
+    // Catálogo base padrão
+    const defaultCatalog = [
+      { n: "Coca-Cola Normal — 220ml", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Coca-Cola Normal — 2L", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Coca-Cola Zero — 200ml", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Coca-Cola Zero — 220ml", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Coca-Cola Zero — 1L", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Pepsi — 200ml", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Pepsi — 350ml", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Sprite — 200ml", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Água Tônica Azul", q: 1, c: "Refrigerante", s: 0 },
+      { n: "Gatorade Vermelho", q: 1, c: "Outros", s: 0 },
+      { n: "Red Bull", q: 1, c: "Energético", s: 0 },
+      { n: "Baly 250ml — Sabores", q: 1, c: "Energético", s: 0 },
+      { n: "Monster 473ml — Branco", q: 1, c: "Energético", s: 0 },
+      { n: "Monster 473ml — Mango Loco", q: 1, c: "Energético", s: 0 },
+      { n: "Monster — Pequeno", q: 1, c: "Energético", s: 0 },
+      { n: "Skol — 269ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Skol — 350ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Skol — 550ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Itaipava — 550ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Antarctica Original — 350ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Heineken Zero", q: 1, c: "Cerveja", s: 0 },
+      { n: "Heineken — Long Neck", q: 1, c: "Cerveja", s: 0 },
+      { n: "Corona Extra — Long Neck", q: 1, c: "Cerveja", s: 0 },
+      { n: "Budweiser — Long Neck", q: 1, c: "Cerveja", s: 0 },
+      { n: "Petra Ultra — 269ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Petra Ultra — Long Neck", q: 1, c: "Cerveja", s: 0 },
+      { n: "Amstel Ultra", q: 1, c: "Cerveja", s: 0 },
+      { n: "Michelob Ultra — Long Neck", q: 1, c: "Cerveja", s: 0 },
+      { n: "Itaipava Malzbier — Long Neck", q: 1, c: "Cerveja", s: 0 },
+      { n: "Stella Artois — 350ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Império — 350ml", q: 1, c: "Cerveja", s: 0 },
+      { n: "Brahma Malzbier", q: 1, c: "Cerveja", s: 0 }
+    ];
+
+    let items = [];
+
+    // Decodifica o estado da URL (Base64 UTF-8)
+    function loadFromUrl() {
+      const hash = window.location.hash.substring(1);
+      if (hash) {
+        try {
+          const json = decodeURIComponent(escape(atob(hash)));
+          items = JSON.parse(json);
+          return;
+        } catch (e) {
+          console.error("Erro ao carregar dados da URL:", e);
+        }
+      }
+      items = [...defaultCatalog];
+    }
+
+    // Codifica o estado atual na URL
+    function syncUrl() {
+      const json = JSON.stringify(items);
+      const hash = btoa(unescape(encodeURIComponent(json)));
+      window.history.replaceState(null, '', `#${hash}`);
+    }
+
+    const listWrapper = document.getElementById('listWrapper');
+    const txtProgress = document.getElementById('txtProgress');
+    const txtItemsTotal = document.getElementById('txtItemsTotal');
+    const formAdd = document.getElementById('formAdd');
+    const toast = document.getElementById('toast');
+
+    function render() {
+      listWrapper.innerHTML = '';
+      let checkedCount = 0;
+
+      items.forEach((item, index) => {
+        if (item.s === 1) checkedCount++;
+
+        const card = document.createElement('div');
+        card.className = `item-card ${item.s === 1 ? 'checked' : ''}`;
+        card.innerHTML = `
+          <div class="item-left">
+            <input type="checkbox" class="custom-check" ${item.s === 1 ? 'checked' : ''} onchange="toggleCheck(${index})">
+            <div class="item-info">
+              <span class="item-title">${item.n}</span>
+              <span class="item-cat">${item.c}</span>
+            </div>
+          </div>
+          <div class="item-right">
+            <div class="qty-box">
+              <button class="qty-btn" type="button" onclick="alterQty(${index}, -1)">-</button>
+              <span class="qty-num">${item.q}</span>
+              <button class="qty-btn" type="button" onclick="alterQty(${index}, 1)">+</button>
+            </div>
+            <button class="btn-remove" type="button" title="Excluir" onclick="removeItem(${index})">×</button>
+          </div>
+        `;
+        listWrapper.appendChild(card);
+      });
+
+      txtProgress.textContent = `${checkedCount} de ${items.length} pegos`;
+      txtItemsTotal.textContent = `${items.length} itens na lista`;
+      syncUrl();
+    }
+
+    window.toggleCheck = (index) => {
+      items[index].s = items[index].s === 1 ? 0 : 1;
+      render();
+    };
+
+    window.alterQty = (index, delta) => {
+      const newQty = items[index].q + delta;
+      if (newQty > 0) {
+        items[index].q = newQty;
+        render();
+      }
+    };
+
+    window.removeItem = (index) => {
+      items.splice(index, 1);
+      render();
+    };
+
+    formAdd.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const n = document.getElementById('inpName').value.trim();
+      const q = parseInt(document.getElementById('inpQty').value, 10);
+      const c = document.getElementById('inpCat').value;
+
+      if (n) {
+        items.unshift({ n, q, c, s: 0 });
+        render();
+        formAdd.reset();
+        document.getElementById('inpQty').value = 1;
+      }
+    });
+
+    // Copiar Link com Estado
+    document.getElementById('btnCopyLink').addEventListener('click', () => {
+      syncUrl();
+      navigator.clipboard.writeText(window.location.href).then(() => {
+        toast.classList.add('show');
+        setTimeout(() => toast.classList.remove('show'), 2200);
+      });
+    });
+
+    // Enviar Resumo Formatado via WhatsApp
+    document.getElementById('btnSendWhats').addEventListener('click', () => {
+      if (items.length === 0) return;
+      syncUrl();
+
+      let text = "📋 *LISTA DE PEDIDOS / BEBIDAS*\n\n";
+      items.forEach(it => {
+        const marker = it.s === 1 ? "✅ [PEGOU]" : "⏳ [PENDENTE]";
+        text += `${marker} (${it.q}x) ${it.n}\n`;
+      });
+      text += `\n🔗 *Acesse o link atualizado da lista:* ${window.location.href}`;
+
+      window.open(`https://wa.me/?text=${encodeURIComponent(text)}`, '_blank');
+    });
+
+    // Inicialização
+    loadFromUrl();
+    render();
+  </script>
+</body>
+</html>
