@@ -3,42 +3,21 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Lista de Bebidas & Compras</title>
+  <title>Lista de Bebidas & Pedidos</title>
   <style>
     :root {
       --bg: #090d16;
       --card: #131b2e;
+      --card-hover: #1b2640;
       --border: #23314e;
       --text-main: #f1f5f9;
       --text-muted: #94a3b8;
       --accent-green: #10b981;
+      --accent-green-hover: #059669;
       --accent-blue: #3b82f6;
       --accent-whatsapp: #22c55e;
       --danger: #ef4444;
       --pill-bg: #1e293b;
-      --pill-active-bg: #3b82f6;
-      --pill-active-text: #ffffff;
-      --input-bg: #090d16;
-      --badge-bg: #1e293b;
-      --badge-text: #38bdf8;
-    }
-
-    [data-theme="light"] {
-      --bg: #f8fafc;
-      --card: #ffffff;
-      --border: #cbd5e1;
-      --text-main: #0f172a;
-      --text-muted: #64748b;
-      --accent-green: #059669;
-      --accent-blue: #2563eb;
-      --accent-whatsapp: #16a34a;
-      --danger: #dc2626;
-      --pill-bg: #e2e8f0;
-      --pill-active-bg: #2563eb;
-      --pill-active-text: #ffffff;
-      --input-bg: #f8fafc;
-      --badge-bg: #e0f2fe;
-      --badge-text: #0284c7;
     }
 
     * {
@@ -51,7 +30,7 @@
     body {
       background-color: var(--bg);
       color: var(--text-main);
-      padding: 20px 14px 80px;
+      padding: 24px 14px 100px;
       display: flex;
       justify-content: center;
     }
@@ -61,65 +40,42 @@
       max-width: 640px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
-    }
-
-    .header-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
-
-    .theme-toggle-btn {
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 8px 14px;
-      border-radius: 20px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
-    }
-
-    .badge-viewmode {
-      background: #f59e0b;
-      color: #000;
-      font-weight: 700;
-      padding: 4px 10px;
-      border-radius: 12px;
-      font-size: 0.75rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      gap: 18px;
     }
 
     header {
       text-align: center;
+      padding: 12px 0 6px;
     }
 
     header h1 {
       font-size: 1.6rem;
       font-weight: 700;
+      letter-spacing: -0.5px;
     }
 
     header p {
       color: var(--text-muted);
-      font-size: 0.85rem;
+      font-size: 0.9rem;
       margin-top: 4px;
     }
 
+    /* Card de ações principais */
     .action-panel {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 14px;
-      padding: 14px;
+      padding: 16px;
       display: flex;
       flex-direction: column;
       gap: 12px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.25);
     }
 
     .stats {
       display: flex;
       justify-content: space-between;
+      align-items: center;
       font-size: 0.85rem;
       color: var(--text-muted);
       padding-bottom: 8px;
@@ -129,13 +85,13 @@
     .button-group {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 10px;
     }
 
     .btn {
-      padding: 10px 12px;
+      padding: 10px 14px;
       border-radius: 8px;
-      font-size: 0.82rem;
+      font-size: 0.85rem;
       font-weight: 600;
       border: none;
       cursor: pointer;
@@ -143,79 +99,49 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
+      transition: all 0.2s;
     }
 
-    .btn-edit-link { background: var(--accent-blue); color: #fff; }
-    .btn-view-link { background: #6366f1; color: #fff; }
-    .btn-whatsapp { background: var(--accent-whatsapp); color: #fff; grid-column: span 2; }
-
-    .search-filter-box {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
+    .btn-share {
+      background: var(--accent-blue);
+      color: #fff;
     }
+    .btn-share:hover { background: #2563eb; }
 
-    .search-input-wrap input {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      color: var(--text-main);
-      padding: 10px 14px;
-      border-radius: 10px;
-      font-size: 0.88rem;
-      outline: none;
+    .btn-whatsapp {
+      background: var(--accent-whatsapp);
+      color: #fff;
     }
+    .btn-whatsapp:hover { background: #16a34a; }
 
-    .categories-bar {
-      display: flex;
-      gap: 6px;
-      overflow-x: auto;
-      padding-bottom: 4px;
-      scrollbar-width: none;
-    }
-    .categories-bar::-webkit-scrollbar { display: none; }
-
-    .category-chip {
-      background: var(--pill-bg);
-      color: var(--text-muted);
-      border: 1px solid var(--border);
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 0.78rem;
-      font-weight: 600;
-      cursor: pointer;
-      white-space: nowrap;
-    }
-
-    .category-chip.active {
-      background: var(--pill-active-bg);
-      color: var(--pill-active-text);
-      border-color: var(--pill-active-bg);
-    }
-
+    /* Formulário de novo item */
     .form-add {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 12px;
+      padding: 14px;
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
     }
 
     input, select {
-      background: var(--input-bg);
+      background: #090d16;
       border: 1px solid var(--border);
       color: var(--text-main);
-      padding: 8px 10px;
+      padding: 8px 12px;
       border-radius: 6px;
       font-size: 0.85rem;
       outline: none;
     }
 
+    input:focus, select:focus {
+      border-color: var(--accent-blue);
+    }
+
     #inpName { flex: 1; min-width: 140px; }
-    #inpQty { width: 60px; text-align: center; }
-    #inpCat { width: 140px; }
+    #inpQty { width: 65px; text-align: center; }
+    #inpCat { width: 110px; }
 
     .btn-add {
       background: var(--accent-green);
@@ -227,7 +153,9 @@
       font-size: 0.85rem;
       cursor: pointer;
     }
+    .btn-add:hover { background: var(--accent-green-hover); }
 
+    /* Lista de itens */
     .items-list {
       display: flex;
       flex-direction: column;
@@ -243,10 +171,13 @@
       align-items: center;
       justify-content: space-between;
       gap: 12px;
+      transition: all 0.2s;
     }
 
     .item-card.checked {
-      opacity: 0.45;
+      background: rgba(19, 27, 46, 0.4);
+      border-color: rgba(35, 49, 78, 0.5);
+      opacity: 0.5;
     }
 
     .item-left {
@@ -257,8 +188,8 @@
     }
 
     .custom-check {
-      width: 20px;
-      height: 20px;
+      width: 19px;
+      height: 19px;
       accent-color: var(--accent-green);
       cursor: pointer;
     }
@@ -278,27 +209,23 @@
       text-decoration: line-through;
     }
 
-    .item-cat-badge {
-      font-size: 0.68rem;
-      color: var(--badge-text);
-      background: var(--badge-bg);
-      padding: 1px 6px;
-      border-radius: 6px;
-      width: fit-content;
+    .item-cat {
+      font-size: 0.7rem;
+      color: var(--text-muted);
       text-transform: uppercase;
-      font-weight: 600;
+      letter-spacing: 0.4px;
     }
 
     .item-right {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
     }
 
     .qty-box {
       display: flex;
       align-items: center;
-      background: var(--input-bg);
+      background: #090d16;
       border: 1px solid var(--border);
       border-radius: 6px;
       padding: 2px;
@@ -311,7 +238,9 @@
       cursor: pointer;
       padding: 2px 7px;
       font-size: 0.95rem;
+      line-height: 1;
     }
+    .qty-btn:hover { color: #fff; }
 
     .qty-num {
       min-width: 20px;
@@ -326,35 +255,24 @@
       color: #64748b;
       cursor: pointer;
       font-size: 1.1rem;
+      line-height: 1;
       padding: 2px;
     }
     .btn-remove:hover { color: var(--danger); }
 
-    /* Modo Leitura */
-    body.is-readonly .form-add,
-    body.is-readonly .btn-remove,
-    body.is-readonly .qty-btn,
-    body.is-readonly #btnCopyEdit {
-      display: none !important;
-    }
-    body.is-readonly .custom-check {
-      pointer-events: none;
-    }
-    body.is-readonly .button-group {
-      grid-template-columns: 1fr;
-    }
-
+    /* Toast de feedback */
     .toast {
       position: fixed;
       bottom: 24px;
       left: 50%;
       transform: translateX(-50%) translateY(100px);
-      background: var(--accent-blue);
+      background: #2563eb;
       color: white;
       padding: 10px 20px;
       border-radius: 30px;
       font-size: 0.85rem;
       font-weight: 500;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.4);
       opacity: 0;
       transition: all 0.3s ease;
       z-index: 100;
@@ -366,7 +284,6 @@
 
     @media (max-width: 480px) {
       .button-group { grid-template-columns: 1fr; }
-      .btn-whatsapp { grid-column: span 1; }
       #inpCat { width: 100%; }
       #inpQty { width: calc(50% - 4px); }
       .btn-add { width: 100%; }
@@ -376,347 +293,32 @@
 <body>
 
   <div class="container">
-    <div class="header-top">
-      <div id="readOnlyIndicator" style="display: none;">
-        <span class="badge-viewmode">Modo Visualização</span>
-      </div>
-      <div style="flex: 1;"></div>
-      <button class="theme-toggle-btn" id="btnThemeToggle">☀️ Modo Claro</button>
-    </div>
-
     <header>
       <h1>📦 Lista de Bebidas</h1>
-      <p id="headerSubtitle">Marque os itens, ajuste as quantidades e filtre por categoria</p>
+      <p>Marque os itens, ajuste as quantidades e compartilhe o link atualizado</p>
     </header>
 
+    <!-- Painel de Compartilhamento & Progresso -->
     <div class="action-panel">
       <div class="stats">
-        <span id="txtProgress">0 de 0 pegos</span>
-        <span id="txtItemsTotal">0 itens</span>
+        <span id="txtProgress">0 de 0 selecionados</span>
+        <span id="txtItemsTotal">0 produtos cadastrados</span>
       </div>
       <div class="button-group">
-        <button class="btn btn-edit-link" id="btnCopyEdit">✏️ Link para Editar</button>
-        <button class="btn btn-view-link" id="btnCopyView">👁️ Link só Visualizar</button>
+        <button class="btn btn-share" id="btnCopyLink">🔗 Copiar Link Atualizado</button>
         <button class="btn btn-whatsapp" id="btnSendWhats">📱 Enviar no WhatsApp</button>
       </div>
     </div>
 
-    <div class="search-filter-box">
-      <div class="search-input-wrap">
-        <input type="text" id="inpSearch" placeholder="🔍 Pesquisar bebida...">
-      </div>
-      <div class="categories-bar" id="categoriesBar"></div>
-    </div>
-
+    <!-- Adicionar Novo Produto -->
     <form class="form-add" id="formAdd">
-      <input type="text" id="inpName" placeholder="Novo item (ex: Gelo de Coco)" required>
-      <input type="number" id="inpQty" value="1" min="1" required>
-      <select id="inpCat"></select>
-      <button type="submit" class="btn-add">+ Adicionar</button>
-    </form>
-
-    <div class="items-list" id="listWrapper"></div>
-  </div>
-
-  <div class="toast" id="toast">Copiado com sucesso!</div>
-
-  <script>
-    const defaultCatalog = [
-      { n: "Coca-Cola Normal - 220ml", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Coca-Cola Normal - 2L", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Coca-Cola Zero - 200ml", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Coca-Cola Zero - 220ml", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Coca-Cola Zero - 1L", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Pepsi - 200ml", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Pepsi - 350ml", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Sprite - 200ml", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Água Tônica Azul", q: 1, c: "Refrigerante", s: 0 },
-      { n: "Gatorade Vermelho", q: 1, c: "Outros", s: 0 },
-      { n: "Red Bull", q: 1, c: "Energético", s: 0 },
-      { n: "Baly 250ml - Sabores", q: 1, c: "Energético", s: 0 },
-      { n: "Monster 473ml - Branco", q: 1, c: "Energético", s: 0 },
-      { n: "Monster 473ml - Mango Loco", q: 1, c: "Energético", s: 0 },
-      { n: "Monster - Pequeno", q: 1, c: "Energético", s: 0 },
-      { n: "Skol - 269ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Skol - 350ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Skol - 550ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Itaipava - 550ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Antarctica Original - 350ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Heineken Zero", q: 1, c: "Cerveja", s: 0 },
-      { n: "Heineken - Long Neck", q: 1, c: "Cerveja", s: 0 },
-      { n: "Corona Extra - Long Neck", q: 1, c: "Cerveja", s: 0 },
-      { n: "Budweiser - Long Neck", q: 1, c: "Cerveja", s: 0 },
-      { n: "Petra Ultra - 269ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Petra Ultra - Long Neck", q: 1, c: "Cerveja", s: 0 },
-      { n: "Amstel Ultra", q: 1, c: "Cerveja", s: 0 },
-      { n: "Michelob Ultra - Long Neck", q: 1, c: "Cerveja", s: 0 },
-      { n: "Itaipava Malzbier - Long Neck", q: 1, c: "Cerveja", s: 0 },
-      { n: "Stella Artois - 350ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Império - 350ml", q: 1, c: "Cerveja", s: 0 },
-      { n: "Brahma Malzbier", q: 1, c: "Cerveja", s: 0 }
-    ];
-
-    let items = [];
-    let customCategories = ["Refrigerante", "Cerveja", "Energético", "Outros"];
-    let currentFilter = "Todas";
-    let searchQuery = "";
-    let isReadOnly = false;
-
-    // Codificação Unicode Segura para UTF-8 / Base64 sem crash
-    function safeEncode(str) {
-      return btoa(encodeURIComponent(str).replace(/%([0-9A-F]{2})/g, function(match, p1) {
-        return String.fromCharCode('0x' + p1);
-      }));
-    }
-
-    function safeDecode(str) {
-      return decodeURIComponent(Array.prototype.map.call(atob(str), function(c) {
-        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
-      }).join(''));
-    }
-
-    function checkMode() {
-      const url = new URL(window.location.href);
-      isReadOnly = url.searchParams.get('mode') === 'view';
-      if (isReadOnly) {
-        document.body.classList.add('is-readonly');
-        document.getElementById('readOnlyIndicator').style.display = 'block';
-        document.getElementById('headerSubtitle').textContent = 'Visualização de pedido (somente leitura)';
-      }
-    }
-
-    function loadData() {
-      const hash = window.location.hash.replace(/^#/, '');
-      if (hash) {
-        try {
-          const json = safeDecode(hash);
-          items = JSON.parse(json);
-          items.forEach(it => {
-            if (it.c && !customCategories.includes(it.c)) {
-              customCategories.push(it.c);
-            }
-          });
-          return;
-        } catch (e) {
-          console.warn("URL sem dados válidos, iniciando catálogo padrão.", e);
-        }
-      }
-      items = JSON.parse(JSON.stringify(defaultCatalog));
-    }
-
-    function syncHash() {
-      if (isReadOnly) return;
-      try {
-        const hash = safeEncode(JSON.stringify(items));
-        const url = new URL(window.location.href);
-        url.hash = hash;
-        window.history.replaceState(null, '', url.toString());
-      } catch (err) {
-        console.error("Erro ao sincronizar hash:", err);
-      }
-    }
-
-    function renderCategoryUI() {
-      const sel = document.getElementById('inpCat');
-      sel.innerHTML = customCategories.map(c => `<option value="${c}">${c}</option>`).join('') +
-                      `<option value="__NEW__">+ Nova categoria...</option>`;
-
-      const bar = document.getElementById('categoriesBar');
-      bar.innerHTML = `<button type="button" class="category-chip ${currentFilter === 'Todas' ? 'active' : ''}" onclick="setFilter('Todas')">Todas</button>` +
-        customCategories.map(c => `<button type="button" class="category-chip ${currentFilter === c ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>`).join('');
-    }
-
-    window.setFilter = (cat) => {
-      currentFilter = cat;
-      renderCategoryUI();
-      renderItems();
-    };
-
-    function renderItems() {
-      const listWrapper = document.getElementById('listWrapper');
-      listWrapper.innerHTML = '';
-      let checkedCount = 0;
-
-      const filtered = items.filter(item => {
-        const matchesCat = currentFilter === "Todas" || item.c === currentFilter;
-        const matchesQuery = item.n.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCat && matchesQuery;
-      });
-
-      items.forEach(it => { if (it.s === 1) checkedCount++; });
-
-      filtered.forEach((item) => {
-        const originalIndex = items.indexOf(item);
-        const card = document.createElement('div');
-        card.className = `item-card ${item.s === 1 ? 'checked' : ''}`;
-        card.innerHTML = `
-          <div class="item-left">
-            <input type="checkbox" class="custom-check" ${item.s === 1 ? 'checked' : ''} onchange="toggleCheck(${originalIndex})">
-            <div class="item-info">
-              <span class="item-title">${item.n}</span>
-              <span class="item-cat-badge">${item.c}</span>
-            </div>
-          </div>
-          <div class="item-right">
-            <div class="qty-box">
-              <button class="qty-btn" type="button" onclick="alterQty(${originalIndex}, -1)">-</button>
-              <span class="qty-num">${item.q}</span>
-              <button class="qty-btn" type="button" onclick="alterQty(${originalIndex}, 1)">+</button>
-            </div>
-            <button class="btn-remove" type="button" title="Excluir" onclick="removeItem(${originalIndex})">×</button>
-          </div>
-        `;
-        listWrapper.appendChild(card);
-      });
-
-      document.getElementById('txtProgress').textContent = `${checkedCount} de ${items.length} pegos`;
-      document.getElementById('txtItemsTotal').textContent = `${filtered.length} visíveis (${items.length} total)`;
-      syncHash();
-    }
-
-    window.toggleCheck = (idx) => {
-      if (isReadOnly) return;
-      items[idx].s = items[idx].s === 1 ? 0 : 1;
-      renderItems();
-    };
-
-    window.alterQty = (idx, delta) => {
-      if (isReadOnly) return;
-      const next = items[idx].q + delta;
-      if (next > 0) {
-        items[idx].q = next;
-        renderItems();
-      }
-    };
-
-    window.removeItem = (idx) => {
-      if (isReadOnly) return;
-      items.splice(idx, 1);
-      renderItems();
-    };
-
-    // Cadastro
-    const formAdd = document.getElementById('formAdd');
-    const selCat = document.getElementById('inpCat');
-
-    selCat.addEventListener('change', () => {
-      if (selCat.value === '__NEW__') {
-        const newCat = prompt("Digite o nome da nova categoria:");
-        if (newCat && newCat.trim()) {
-          const val = newCat.trim();
-          if (!customCategories.includes(val)) {
-            customCategories.push(val);
-          }
-          renderCategoryUI();
-          selCat.value = val;
-        } else {
-          selCat.value = "Outros";
-        }
-      }
-    });
-
-    formAdd.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const n = document.getElementById('inpName').value.trim();
-      const q = parseInt(document.getElementById('inpQty').value, 10);
-      const c = selCat.value;
-
-      if (n) {
-        items.unshift({ n, q, c, s: 0 });
-        if (!customCategories.includes(c)) customCategories.push(c);
-        renderCategoryUI();
-        renderItems();
-        formAdd.reset();
-        document.getElementById('inpQty').value = 1;
-      }
-    });
-
-    document.getElementById('inpSearch').addEventListener('input', (e) => {
-      searchQuery = e.target.value.trim();
-      renderItems();
-    });
-
-    // Copiar com Fallback Mobile Seguro
-    function copyText(text, successMsg) {
-      const toast = document.getElementById('toast');
-      function triggerToast() {
-        toast.textContent = successMsg;
-        toast.classList.add('show');
-        setTimeout(() => toast.classList.remove('show'), 2200);
-      }
-
-      if (navigator.clipboard && window.isSecureContext) {
-        navigator.clipboard.writeText(text).then(triggerToast).catch(() => fallbackCopy(text, triggerToast));
-      } else {
-        fallbackCopy(text, triggerToast);
-      }
-    }
-
-    function fallbackCopy(text, cb) {
-      const temp = document.createElement("textarea");
-      temp.value = text;
-      temp.style.position = "fixed";
-      temp.style.opacity = "0";
-      document.body.appendChild(temp);
-      temp.focus();
-      temp.select();
-      try {
-        document.execCommand('copy');
-        cb();
-      } catch (e) {
-        alert("Copie o link manualmente da barra de navegação!");
-      }
-      document.body.removeChild(temp);
-    }
-
-    document.getElementById('btnCopyEdit').addEventListener('click', () => {
-      syncHash();
-      const url = new URL(window.location.href);
-      url.searchParams.delete('mode');
-      copyText(url.toString(), "Link de EDIÇÃO copiado!");
-    });
-
-    document.getElementById('btnCopyView').addEventListener('click', () => {
-      syncHash();
-      const url = new URL(window.location.href);
-      url.searchParams.set('mode', 'view');
-      copyText(url.toString(), "Link de VISUALIZAÇÃO copiado!");
-    });
-
-    document.getElementById('btnSendWhats').addEventListener('click', () => {
-      if (items.length === 0) return;
-      syncHash();
-      const url = new URL(window.location.href);
-      url.searchParams.set('mode', 'view');
-
-      let t>
-    <div class="action-panel">
-      <div class="stats">
-        <span id="txtProgress">0 de 0 pegos</span>
-        <span id="txtItemsTotal">0 itens</span>
-      </div>
-      <div class="button-group">
-        <button class="btn btn-edit-link" id="btnCopyEdit">✏️ Link para Editar</button>
-        <button class="btn btn-view-link" id="btnCopyView">👁️ Link só Visualizar</button>
-        <button class="btn btn-whatsapp" id="btnSendWhats">📱 Enviar no WhatsApp</button>
-      </div>
-    </div>
-
-    <!-- Barra de Pesquisa e Filtros -->
-    <div class="search-filter-box">
-      <div class="search-input-wrap">
-        <span class="search-icon">🔍</span>
-        <input type="text" id="inpSearch" placeholder="Pesquisar produto...">
-      </div>
-      <div class="categories-bar" id="categoriesBar"></div>
-    </div>
-
-    <!-- Formulário de Cadastro (Oculto em modo leitura) -->
-    <form class="form-add" id="formAdd">
-      <input type="text" id="inpName" placeholder="Novo item (ex: Suco de Laranja 1L)" required>
+      <input type="text" id="inpName" placeholder="Novo item (ex: Gelo 5kg)" required>
       <input type="number" id="inpQty" value="1" min="1" required>
       <select id="inpCat">
-        <!-- Preenchido dinamicamente -->
+        <option value="Refrigerante">Refrigerante</option>
+        <option value="Cerveja">Cerveja</option>
+        <option value="Energético">Energético</option>
+        <option value="Outros">Outros</option>
       </select>
       <button type="submit" class="btn-add">+ Adicionar</button>
     </form>
@@ -725,9 +327,10 @@
     <div class="items-list" id="listWrapper"></div>
   </div>
 
-  <div class="toast" id="toast">Link copiado!</div>
+  <div class="toast" id="toast">Link copiado para a área de transferência!</div>
 
   <script>
+    // Catálogo base padrão
     const defaultCatalog = [
       { n: "Coca-Cola Normal — 220ml", q: 1, c: "Refrigerante", s: 0 },
       { n: "Coca-Cola Normal — 2L", q: 1, c: "Refrigerante", s: 0 },
@@ -764,184 +367,17 @@
     ];
 
     let items = [];
-    let customCategories = new Set(["Refrigerante", "Cerveja", "Energético", "Outros"]);
-    let currentFilter = "Todas";
-    let searchQuery = "";
-    let isReadOnly = false;
 
-    // Detecta se a URL é de visualização ou de edição
-    function checkMode() {
-      const params = new URLSearchParams(window.location.search);
-      isReadOnly = params.get('mode') === 'view';
-      if (isReadOnly) {
-        document.body.classList.add('is-readonly');
-        document.getElementById('readOnlyIndicator').style.display = 'block';
-        document.getElementById('headerSubtitle').textContent = 'Lista em modo somente leitura';
-      }
-    }
-
-    // Carrega dados da hash (#)
-    function loadData() {
+    // Decodifica o estado da URL (Base64 UTF-8)
+    function loadFromUrl() {
       const hash = window.location.hash.substring(1);
       if (hash) {
         try {
           const json = decodeURIComponent(escape(atob(hash)));
           items = JSON.parse(json);
-          items.forEach(it => { if(it.c) customCategories.add(it.c); });
           return;
         } catch (e) {
-          console.error("Falha ao decodificar hash da URL:", e);
-        }
-      }
-      items = [...defaultCatalog];
-    }
-
-    function syncHash() {
-      if (isReadOnly) return;
-      const json = JSON.stringify(items);
-      const hash = btoa(unescape(encodeURIComponent(json)));
-      window.history.replaceState(null, '', `${window.location.pathname}${window.location.search}#${hash}`);
-    }
-
-    // Renderiza o select do formulário e as pílulas de filtro
-    function renderCategoryUI() {
-      items.forEach(it => { if (it.c) customCategories.add(it.c); });
-
-      const sel = document.getElementById('inpCat');
-      const catsArray = Array.from(customCategories);
-      
-      sel.innerHTML = catsArray.map(c => `<option value="${c}">${c}</option>`).join('') + 
-                      `<option value="__NEW__">+ Nova categoria...</option>`;
-
-      const bar = document.getElementById('categoriesBar');
-      bar.innerHTML = `<button class="category-chip ${currentFilter === 'Todas' ? 'active' : ''}" onclick="setFilter('Todas')">Todas</button>` +
-        catsArray.map(c => `<button class="category-chip ${currentFilter === c ? 'active' : ''}" onclick="setFilter('${c}')">${c}</button>`).join('');
-    }
-
-    window.setFilter = (cat) => {
-      currentFilter = cat;
-      renderCategoryUI();
-      renderItems();
-    };
-
-    function renderItems() {
-      const listWrapper = document.getElementById('listWrapper');
-      listWrapper.innerHTML = '';
-      let checkedCount = 0;
-
-      const filtered = items.filter(item => {
-        const matchesCat = currentFilter === "Todas" || item.c === currentFilter;
-        const matchesQuery = item.n.toLowerCase().includes(searchQuery.toLowerCase());
-        return matchesCat && matchesQuery;
-      });
-
-      items.forEach(it => { if (it.s === 1) checkedCount++; });
-
-      filtered.forEach((item) => {
-        const originalIndex = items.indexOf(item);
-        const card = document.createElement('div');
-        card.className = `item-card ${item.s === 1 ? 'checked' : ''}`;
-        card.innerHTML = `
-          <div class="item-left">
-            <input type="checkbox" class="custom-check" ${item.s === 1 ? 'checked' : ''} onchange="toggleCheck(${originalIndex})">
-            <div class="item-info">
-              <span class="item-title">${item.n}</span>
-              <span class="item-cat-badge">${item.c}</span>
-            </div>
-          </div>
-          <div class="item-right">
-            <div class="qty-box">
-              <button class="qty-btn" type="button" onclick="alterQty(${originalIndex}, -1)">-</button>
-              <span class="qty-num">${item.q}</span>
-              <button class="qty-btn" type="button" onclick="alterQty(${originalIndex}, 1)">+</button>
-            </div>
-            <button class="btn-remove" type="button" title="Excluir" onclick="removeItem(${originalIndex})">×</button>
-          </div>
-        `;
-        listWrapper.appendChild(card);
-      });
-
-      document.getElementById('txtProgress').textContent = `${checkedCount} de ${items.length} pegos`;
-      document.getElementById('txtItemsTotal').textContent = `${filtered.length} visíveis (${items.length} total)`;
-      syncHash();
-    }
-
-    window.toggleCheck = (idx) => {
-      if (isReadOnly) return;
-      items[idx].s = items[idx].s === 1 ? 0 : 1;
-      renderItems();
-    };
-
-    window.alterQty = (idx, delta) => {
-      if (isReadOnly) return;
-      const next = items[idx].q + delta;
-      if (next > 0) {
-        items[idx].q = next;
-        renderItems();
-      }
-    };
-
-    window.removeItem = (idx) => {
-      if (isReadOnly) return;
-      items.splice(idx, 1);
-      renderCategoryUI();
-      renderItems();
-    };
-
-    // Cadastro de Item com suporte a nova categoria
-    const formAdd = document.getElementById('formAdd');
-    const selCat = document.getElementById('inpCat');
-
-    selCat.addEventListener('change', () => {
-      if (selCat.value === '__NEW__') {
-        const newCat = prompt("Digite o nome da nova categoria:");
-        if (newCat && newCat.trim()) {
-          const formatted = newCat.trim();
-          customCategories.add(formatted);
-          renderCategoryUI();
-          selCat.value = formatted;
-        } else {
-          selCat.value = "Outros";
-        }
-      }
-    });
-
-    formAdd.addEventListener('submit', (e) => {
-      e.preventDefault();
-      const n = document.getElementById('inpName').value.trim();
-      const q = parseInt(document.getElementById('inpQty').value, 10);
-      const c = selCat.value;
-
-      if (n) {
-        items.unshift({ n, q, c, s: 0 });
-        renderCategoryUI();
-        renderItems();
-        formAdd.reset();
-        document.getElementById('inpQty').value = 1;
-      }
-    });
-
-    // Busca em tempo real
-    document.getElementById('inpSearch').addEventListener('input', (e) => {
-      searchQuery = e.target.value.trim();
-      renderItems();
-    });
-
-    // Copiar Links (Edição e Leitura)
-    function showToast(msg) {
-      const toast = document.getElementById('toast');
-      toast.textContent = msg;
-      toast.classList.add('show');
-      setTimeout(() => toast.classList.remove('show'), 2200);
-    }
-
-    document.getElementById('btnCopyEdit').addEventListener('click', () => {
-      syncHash();
-      const cleanUrl = `${window.location.origin}${window.location.pathname}${window.location.hash}`;
-      navigator.clipboard.writeText(cleanUrl).then(() => showToast("Link de EDIÇÃO copiado!"));
-    });
-
-    document.getElementById('btnCopyView').addEventListe console.error("Erro ao carregar dados da URL:", e);
+          console.error("Erro ao carregar dados da URL:", e);
         }
       }
       items = [...defaultCatalog];
